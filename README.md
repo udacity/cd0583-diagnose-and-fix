@@ -67,19 +67,3 @@ Follow the steps below for deploying this model:
 ## Extra Resources
 * [Incremental (Online) Learning](https://towardsdatascience.com/incremental-online-learning-with-scikit-multiflow-6b846913a50b)
 * [Understanding Domain Adaptation](https://towardsdatascience.com/understanding-domain-adaptation-5baa723ac71f)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
