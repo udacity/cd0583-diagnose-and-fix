@@ -41,6 +41,10 @@ raw_data.tail()
 #### Prerequisites
 * Heroku account
 * GitHub account
+* Clone the Github repo
+    ```bash
+    https://github.com/udacity/cd0583-diagnose-and-fix.git
+    ```
 
 #### Dependencies
 * All the dependencies are listed in the `requirements.txt` file. You can setup a virtual environment using [Anaconda](https://www.anaconda.com/products/distribution) and install the required dependencies there.
