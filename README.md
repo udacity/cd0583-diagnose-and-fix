@@ -42,10 +42,6 @@ raw_data.tail()
 * Heroku account
 * GitHub account
 
-#### Project Structure
-
-#TODO: Add the project tree here.
-
 #### Dependencies
 * All the dependencies are listed in the `requirements.txt` file. You can setup a virtual environment using [Anaconda](https://www.anaconda.com/products/distribution) and install the required dependencies there.
 * `runtime.txt` contains the python version that is used for this tutorial.
@@ -56,6 +52,17 @@ Follow the steps below for deploying this model:
 * Ensure that all the dependencies listed in the `requirements.txt` file are installed.
 * Run the `train.py` file to log experiments in **mlflow** <br />
 * View the results in the **mlflow webui** <br />
+
+## How to fix Data Drift issues
+* If there is substantial data drift then you should reweigh samples in the training data, giving more importance to newer patterns.
+* Identify new segments where the model fails, and create a different model for it. Consider using an ensemble of several models for different segments of the data.
+* Change the prediction target. For example, switch from weekly to daily forecast or replace the regression model with classification into categories from "high" to "low."
+* Pick a different model architecture to account for ongoing drift. You can consider incremental or online learning, where the model continuously adapts to new data.
+* Apply domain adaptation strategies. There are a number of approaches to help the model better generalize to a new target domain.
+
+## Extra Resources
+* [Incremental (Online) Learning](https://towardsdatascience.com/incremental-online-learning-with-scikit-multiflow-6b846913a50b)
+* [Understanding Domain Adaptation](https://towardsdatascience.com/understanding-domain-adaptation-5baa723ac71f)
 
 
 
