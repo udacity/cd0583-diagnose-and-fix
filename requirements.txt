@@ -1,5 +1,6 @@
-mlflow
+mlflow==3.8.1
 pandas
 requests
-evidently
-plotly
+evidently==0.7.21
+plotly==5.24.1
+kaleido==1.2.0
