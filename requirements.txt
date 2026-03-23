@@ -1,4 +1,4 @@
-mlflow==3.8.1
+mlflow==3.9.0rc0
 pandas
 requests
 evidently==0.7.21
