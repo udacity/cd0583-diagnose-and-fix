@@ -57,6 +57,11 @@ Follow the steps below for deploying this model:
 * Run the `train.py` file to log experiments in **mlflow** <br />
 * View the results in the **mlflow webui** <br />
 
+The script also saves four interactive HTML charts (`fig1.html` through
+`fig4.html`) in the `images/` directory. Download these files from the workspace
+and open them in your browser. PNG export is not used, so Kaleido and a browser
+installed inside the workspace are not required to generate the charts.
+
 ## How to fix Data Drift issues
 * If there is substantial data drift then you should reweigh samples in the training data, giving more importance to newer patterns.
 * Identify new segments where the model fails, and create a different model for it. Consider using an ensemble of several models for different segments of the data.
