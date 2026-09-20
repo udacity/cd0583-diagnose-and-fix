@@ -177,13 +177,7 @@ def save_figure(fig: go.Figure, stem: str) -> None:
     html_path = OUTPUT_DIR / f"{stem}.html"
     fig.write_html(str(html_path))
 
-    png_path = OUTPUT_DIR / f"{stem}.png"
-    try:
-        fig.write_image(str(png_path))
-        print(f"Saved: {html_path.name}, {png_path.name}")
-    except Exception as exc:
-        print(f"Saved: {html_path.name}")
-        print(f"PNG export skipped for {stem}: {exc}")
+    print(f"Saved: {html_path.name}")
 
 
 def make_heatmap(
