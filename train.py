@@ -68,30 +68,11 @@ def make_dataset(df: pd.DataFrame) -> Dataset:
     )
 
 
-def first_match(obj, keys):
-    if isinstance(obj, dict):
-        for key in keys:
-            if key in obj:
-                return obj[key]
-        for value in obj.values():
-            found = first_match(value, keys)
-            if found is not None:
-                return found
-
-    if isinstance(obj, list):
-        for item in obj:
-            found = first_match(item, keys)
-            if found is not None:
-                return found
-
-    return None
-
-
 def run_report(metric, current_df: pd.DataFrame, reference_df: pd.DataFrame) -> dict:
     current_dataset = make_dataset(current_df)
     reference_dataset = make_dataset(reference_df)
 
-    report = Report([metric])
+    report = Report([metric], include_tests=True)
     result = report.run(current_dataset, reference_dataset)
     return result.dict()
 
@@ -107,14 +88,7 @@ def detect_dataset_drift(
         reference_df=reference_df,
     )
 
-    drift_count = first_match(report_dict, ["count", "drifted_columns_count"])
-    drift_share = first_match(report_dict, ["share", "drift_share"])
-
-    if drift_share is None and drift_count is not None:
-        drift_share = drift_count / len(NUMERICAL_FEATURES)
-
-    if drift_share is None:
-        raise ValueError("Could not extract dataset drift results from Evidently output.")
+    drift_share = report_dict["metrics"][0]["value"]["share"]
 
     if return_ratio:
         return float(drift_share)
@@ -136,18 +110,22 @@ def detect_features_drift(
             reference_df=reference_df,
         )
 
-        drift_detected = first_match(report_dict, ["drift_detected", "detected"])
-        drift_score = first_match(report_dict, ["drift_score", "score", "value"])
-
-        if drift_detected is None and drift_score is None:
-            raise ValueError(
-                f"Could not extract drift results for feature '{feature}'."
-            )
+        metric_result = report_dict["metrics"][0]
 
         if return_scores:
-            results.append((feature, float(drift_score)))
+            results.append((feature, float(metric_result["value"])))
         else:
-            results.append((feature, bool(drift_detected)))
+            # Evidently handles both p-value and distance-based drift methods.
+            drift_tests = [
+                test for test in report_dict["tests"]
+                if test["id"] == "drift"
+                and test["metric_config"]["metric_id"] == metric_result["id"]
+            ]
+            if len(drift_tests) != 1 or drift_tests[0]["status"] not in (
+                "SUCCESS", "FAIL"
+            ):
+                raise ValueError(f"Could not determine drift for feature '{feature}'.")
+            results.append((feature, drift_tests[0]["status"] == "FAIL"))
 
     return results
 

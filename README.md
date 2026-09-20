@@ -1,4 +1,4 @@
-# Diagonsing and Fixing Operational Problems
+# Diagnosing and Fixing Operational Problems
 
 ## How to diagnose and fix problems in a production deployed code?
 
@@ -12,10 +12,9 @@ To understand a model's functionality and find its underlying problems, we need 
 
 ## Summary
 
-In this section we will diagnose and fix problems in a production deployed code. To that end, we will:
+This tutorial explores data drift monitoring using the Bike Sharing Dataset. We will:
 
 * Use **evidently** and **mlflow** libraries.
-* Deploy a machine learning model in **Heroku**.
 * Calculate data drift for the model.
 * Use **mlflow Tracking** for the training experiments indicating data drift.
 * Explore the results using **mlflow UI**.
@@ -36,31 +35,81 @@ with zipfile.ZipFile(io.BytesIO(content)) as arc:
 raw_data.tail()
 ```
 
-## Environment setup
+## Run in the Udacity workspace
 
-#### Prerequisites
-* Heroku account
-* GitHub account
-* Clone the Github repo
-    ```bash
-    https://github.com/udacity/cd0583-diagnose-and-fix.git
-    ```
+The workspace includes the code and required dependencies. It opens in
+`/workspace/cd0583-diagnose-and-fix/`, the repository root. No cloning or
+package installation is needed.
 
-#### Dependencies
-* All the dependencies are listed in the `requirements.txt` file. You can setup a virtual environment using [Anaconda](https://www.anaconda.com/products/distribution) and install the required dependencies there.
-* `runtime.txt` contains the python version that is used for this tutorial.
+1. Start the workspace and select **Terminal > New Terminal** (under **More**
+   if the Terminal menu is hidden).
+2. Run the experiment script:
 
-## Steps
-Follow the steps below for deploying this model:
+   ```bash
+   python train.py
+   ```
 
-* Ensure that all the dependencies listed in the `requirements.txt` file are installed.
-* Run the `train.py` file to log experiments in **mlflow** <br />
-* View the results in the **mlflow webui** <br />
+   This records six monthly drift runs in `mlflow.db` and saves four interactive
+   charts (`fig1.html` through `fig4.html`) in `images/`. Download the HTML files
+   and open them in your browser. PNG export and Kaleido are not required.
+3. Click **Toggle Panel** in the upper-right corner of the IDE and select
+   **Ports** in the bottom panel. If port `5000` is not listed, select
+   **Forward a Port** or **Add Port**, enter `5000`, and press **Enter**.
+4. Copy the hostname from the **Local Address** URL. For example, for
+   `https://abc123.prod.udacity-student-workspaces.com/proxy/5000/`, the hostname
+   is `abc123.prod.udacity-student-workspaces.com`.
+5. In the terminal, from the same repository directory, run:
 
-The script also saves four interactive HTML charts (`fig1.html` through
-`fig4.html`) in the `images/` directory. Download these files from the workspace
-and open them in your browser. PNG export is not used, so Kaleido and a browser
-installed inside the workspace are not required to generate the charts.
+   ```bash
+   mlflow ui --port 5000 \
+     --backend-store-uri sqlite:///mlflow.db \
+     --allowed-hosts <workspace-hostname>
+   ```
+
+   Replace `<workspace-hostname>`, including the angle brackets, with your
+   hostname. Keep the terminal running.
+6. In **Ports**, hover over port `5000` and select **Open in Browser**.
+   Open **Experiments > Dataset Drift Analysis with Evidently** to inspect
+   or compare runs.
+
+If you see **Invalid Host header**, check the hostname passed to
+`--allowed-hosts`; omit `https://` and `/proxy/5000/`. If the experiment is
+missing, start MLflow from the directory containing the generated `mlflow.db`.
+After a workspace timeout, check the forwarded address and restart MLflow.
+
+## Optional: Run locally
+
+Source repository: [udacity/cd0583-diagnose-and-fix](https://github.com/udacity/cd0583-diagnose-and-fix).
+
+Clone the repository, then create and activate a Python virtual environment.
+The script has been tested with Python 3.11 and 3.13.
+
+```bash
+git clone https://github.com/udacity/cd0583-diagnose-and-fix.git
+cd cd0583-diagnose-and-fix
+python -m venv .venv
+```
+
+Activate it with `source .venv/bin/activate` on macOS/Linux, or
+`.venv\Scripts\Activate.ps1` in Windows PowerShell. Then run:
+
+```bash
+python -m pip install -r requirements.txt
+python train.py
+mlflow ui --port 5000 --backend-store-uri sqlite:///mlflow.db
+```
+
+Keep the terminal running and open [http://localhost:5000](http://localhost:5000).
+The workspace Ports panel and hostname steps do not apply locally.
+
+## Verification
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+The regression tests cover dataset drift ratios, p-value and distance-based
+feature drift decisions, and missing drift test results.
 
 ## How to fix Data Drift issues
 * If there is substantial data drift then you should reweigh samples in the training data, giving more importance to newer patterns.
